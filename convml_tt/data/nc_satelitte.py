@@ -204,7 +204,7 @@ class Extract_from_nc_images(luigi.Task):
             RGB_contrast = transform_nc(i)
             RGB_contrast = NormalizeData(RGB_contrast)
             if not is_convective(i):
-                break
+                continue
             #plt.imshow(RGB_contrast)
             #plt.show()
             HSV = cv2.cvtColor(RGB_contrast, cv2.COLOR_RGB2HSV)
