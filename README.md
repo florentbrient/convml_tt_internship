@@ -80,9 +80,11 @@ python -m convml_tt.data.examples
 ```
 
 #### Creating data from NetCDF files
+To generate tiles images from your netCDF data use this command.
 ```bash
 python -m luigi --module convml_tt.data.nc_satelitte BuildImages --local-scheduler --ExtractNcFiles-path="<your-path>"
 ```
+This would generate the images in the directory "tmp" of this repository and then just use the absolute path to the tmp directory in the EURE4CA notebook.
 #### Creating training data from GOES-16 satellite observations
 
 **NB**: dataset creation doesn't currently work as it is being refactored

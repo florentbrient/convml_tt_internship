@@ -8,11 +8,5 @@
 #SBATCH --cpus-per-task=4
 #SBATCH --gres=gpu:1
 #SBATCH --gres-flags=enforce-binding
-ulimit -s unlimited
-module purge
-module load python/3.8-anaconda2020-11
-conda init bash
-cd /home/rramoul/convml_tt_gpu/
-conda activate  convml_tt
-pip install .
-srun python -m convml_tt.trainer data/LARGE --max-epochs 500 --base-arch resnet34 --log-to-wandb --preload-data --num-dataloader-workers 16
+
+srun python -m convml_tt.trainer data/LARGE --max-epochs 200 --base-arch resnet108 --log-to-wandb --preload-data --num-dataloader-workers 16
