@@ -144,3 +144,15 @@ There is an example of how to make these plots and how to easily generate an
 embedding (or encoding) vector for each example tile in
 `example_notebooks/model_interpretation`. Again this notebook expects the
 directory layout mentioned above.
+
+
+## Potential problems
+# Anti-aliased library
+If you encounter an import problem with this library follow those steps ( after activating in the conda environnement ) :
+```bash
+cd 
+git clone https://github.com/adobe/antialiased-cnns
+cd antialiased-cnns
+pip install -r requirements.txt
+pip install antialiased-cnns
+```
