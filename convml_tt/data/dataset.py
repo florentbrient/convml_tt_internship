@@ -45,8 +45,7 @@ def _find_tile_files(data_dir, stage):
     ext = TILE_FILENAME_FORMAT.split(".")[-1]
     full_path = Path(data_dir) / stage
     for f_path in sorted(full_path.glob(f"*.{ext}"), key=lambda p: p.name):
-        #file_info = parse.parse(TILE_FILENAME_FORMAT, f_path.name)
-        file_info = parse.parse(TILE_FILENAME_FORMAT,f_path.name)
+        file_info = parse.parse(TILE_FILENAME_FORMAT, f_path.name)
         tile_name = file_info["tile_type"]
         try:
             tile_type = TileType[tile_name.upper()]
@@ -54,7 +53,6 @@ def _find_tile_files(data_dir, stage):
         except KeyError:
             pass
     return file_paths
-    
 
 
 class _ImageDatasetBase(Dataset):

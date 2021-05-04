@@ -25,21 +25,17 @@ def get_embeddings(tile_dataset: ImageSingletDataset, model, prediction_batch_si
         batched_results.append(y_batch.cpu().detach().numpy())
 
     embeddings = np.vstack(batched_results)
-    if model.base_arch == "unknown":
-        # XXX: the models I trained with fastai as the backend have really
-        # small magnitude in the embedding values. So I'll scale the values
-        # here. Remove this once we've stopped using the old fastai trained
-        # models
-        embeddings *= 1.0e3
-
     tile_ids = np.arange(len(tile_dataloader.dataset))
 
     dims = ("tile_id", "emb_dim")
     coords = dict(tile_id=tile_ids)
-    attrs = dict(
-        data_dir=str(Path(tile_dataset.data_dir).absolute()),
-        tile_type=tile_dataset.tile_type.name,
-        stage=tile_dataset.stage,
-    )
+
+    attrs = {}
+    if hasattr(tile_dataset, "tile_type"):
+        attrs["tile_type"] = tile_dataset.tile_type.name
+    if hasattr(tile_dataset, "stage"):
+        attrs["stage"] = tile_dataset.stage
+    if hasattr(tile_dataset, "data_dir"):
+        attrs["data_dir"] = str(Path(tile_dataset.data_dir).absolute())
 
     return xr.DataArray(embeddings, dims=dims, coords=coords, attrs=attrs)

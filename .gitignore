@@ -1,0 +1,13 @@
+*.nc
+*.pyc
+.*.sw*
+.ipynb_checkpoints/
+notebooks/
+.pytest_cache/
+/data/
+lightning_logs/
+*.tgz
+*.pkl
+*.ckpt
+example_notebooks/*/data/
+wandb/

@@ -4,6 +4,12 @@ channels:
   - pytorch
   - defaults
 dependencies:
+  # pin pytorch version until kornia have fixed issue with 1.8.0
+  # https://github.com/kornia/kornia/issues/902
+  - torchvision>=0.4.0
+  - Pillow=6.1
+  # depedencies below are for windows especially (no wheel for bottleneck, and
+  # miniconda on windows doesn't include git)
   - _libgcc_mutex=0.1=main
   - absl-py=0.12.0=py37h06a4308_0
   - aiohttp=3.7.4=py37h27cfd23_1
@@ -179,3 +185,9 @@ dependencies:
     - wcwidth==0.2.5
     - webencodings==0.5.1
     - widgetsnbextension==3.5.1
+
+channels:
+  - pytorch
+  - defaults
+  - conda-forge
+dependencies:
