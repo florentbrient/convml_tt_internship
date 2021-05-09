@@ -32,7 +32,6 @@ def get_train_augmentation_transforms(
 ):
     """
     Build a set of pytorch image Transforms to use during training:
-
         p_flip_vertical: probability of a vertical flip
         p_flip_horizontal: probability of a horizontal flip
         max_rotation: maximum rotation angle in degrees
