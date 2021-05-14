@@ -1,14 +1,48 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import cv2
-
+import os
 import sklearn.decomposition
 from sklearn.preprocessing import StandardScaler
 from sklearn.cluster import KMeans
 #from ...data.dataset import ImageSingletDataset, TileType
 import pickle
 from sklearn.metrics import silhouette_score
+import cv2
+import numpy as np
+import matplotlib
+import matplotlib.pyplot as plt
+import matplotlib.image as mpimg
+from matplotlib.patches import Polygon
+from matplotlib.collections import PatchCollection
 
+import xarray as xr
+import pandas as pd
+import pytorch_lightning as pl
+from matplotlib.patches import Polygon
+from matplotlib.collections import PatchCollection
+import torch
+from sklearn.decomposition import PCA
+from PIL import Image
+import os, shutil
+from matplotlib.patches import Rectangle as rectan
+from random import seed
+from random import randint
+from sklearn.metrics import confusion_matrix
+from PIL import Image
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors.nearest_centroid import NearestCentroid
+from tqdm.notebook import tqdm
+TILE_FILENAME_FORMAT = "{triplet_id:05d}_{tile_type}.png"
+TEST_SIZE = 0.3
+RANDOM_STATE = 1024
+COLORS = ['b', 'g', 'r', 'm'] # Color of each class
+DATASET_DIR = "../../../NC/zooniverse/"
+print(cv2.__version__)
+
+pca = PCA(n_components=3, svd_solver='arpack')
 
 def rle2mask(mask_rle, shape=(2100, 1400)):
     '''
@@ -53,7 +87,7 @@ def predict_domain(image):
     '''
         for a specific image of zooniverse predict each tile.
     '''
-    deb_path = "tmp/train/"
+    deb_path = "../../tmp/train/"
     i = 0
     for x in range(0, image.shape[0], 256):
             for y in range(0, image.shape[1], 256):
@@ -77,8 +111,8 @@ def predict_domain(image):
     return da_embeddings
     
 
-def visualize_boxes_cluster(sample):
-    tmp_dataset_path =  '../NC/tmp'
+def visualize_boxes_cluster(df, sample):
+    tmp_dataset_path =  '../../../NC/tmp'
     for filename in os.listdir(tmp_dataset_path+"/train/"):
         file_path = os.path.join(tmp_dataset_path+"/train/", filename)
         try:
@@ -116,7 +150,7 @@ def visualize_boxes_cluster(sample):
                 hvs.append(hv)
                 #break
             #print("Contours : "+str(contours))
-            rgbImages = extract_contour(img, contours, shown=shown, direct=False)
+            rgbImages = extract_contour(img, contours, direct=False)
             da = 0
             for rgbImg in rgbImages:
                 rgbImg = cv2.cvtColor(rgbImg, cv2.COLOR_BGR2RGB)
@@ -128,7 +162,7 @@ def visualize_boxes_cluster(sample):
                         tm = t
                         coordinates.append([xvs[da]+x,yvs[da]+y, wvs[da], hvs[da]])
                         out_name = TILE_FILENAME_FORMAT.format(triplet_id=tm,tile_type='anchor')
-                        out_name = '../NC/tmp/train/'+out_name
+                        out_name = '../../../NC/tmp/train/'+out_name
                         cv2.imwrite(out_name,rgbImg[x:x+256,y:y+256])
                         t += 1
                 da += 1
@@ -168,8 +202,8 @@ def visualize_boxes_cluster(sample):
     plt.show()
 
 
-def visualize_domain(sample):
-    tmp_dataset_path =  '../NC/tmp'
+def visualize_domain(df, sample):
+    tmp_dataset_path =  '../../../NC/tmp'
     for filename in os.listdir(tmp_dataset_path+"/train/"):
         file_path = os.path.join(tmp_dataset_path+"/train/", filename)
         try:
@@ -199,7 +233,7 @@ def visualize_domain(sample):
             tm = t
             coordinates.append([x, y, 256, 256])
             out_name = TILE_FILENAME_FORMAT.format(triplet_id=tm,tile_type='anchor')
-            out_name = '../NC/tmp/train/'+out_name
+            out_name = '../../../NC/tmp/train/'+out_name
             cv2.imwrite(out_name, img[x:x+256,y:y+256])
             t += 1
     for idx, rle in enumerate(labels.values):
