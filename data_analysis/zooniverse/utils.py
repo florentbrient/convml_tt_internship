@@ -60,7 +60,47 @@ def rle2mask(mask_rle, shape=(2100, 1400)):
         img[lo:hi] = 1
     return img.reshape(shape).T
 
+def extract_non_black(img):
+    # Import your picture
+    input_picture = img.copy()
+    #input_picture = cv2.cvtColor(input_picture, cv2.COLOR_BGR2RGB) 
+    # Color it in gray
+    gray = cv2.cvtColor(input_picture, cv2.COLOR_BGR2GRAY)
 
+    # Create our mask by selecting the non-zero values of the picture
+    ret, mask = cv2.threshold(gray,0, 255,cv2.THRESH_BINARY)
+
+    # Select the contour
+    cont, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    # if your mask is incurved or if you want better results, 
+    # you may want to use cv2.CHAIN_APPROX_NONE instead of cv2.CHAIN_APPROX_SIMPLE, 
+    # but the rectangle search will be longer
+    
+    cv2.drawContours(input_picture, cont, -1, (0,255,255), 2)
+    """
+    plt.figure()
+    plt.imshow(input_picture)
+    plt.show()
+    """
+    # Find contour and sort by contour area
+    gray = cv2.cvtColor(img.copy(), cv2.COLOR_BGR2GRAY)
+    thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_OTSU + cv2.THRESH_BINARY)[1]
+    cnts = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    cnts = cnts[0] if len(cnts) == 2 else cnts[1]
+    cnts = sorted(cnts, key=cv2.contourArea, reverse=True)
+
+    # Find bounding box and extract ROI
+    for c in cnts:
+        x,y,w,h = cv2.boundingRect(c)
+        ROI = img[y:y+h, x:x+w]
+        #return ROI
+        break
+    mina = min(ROI.shape[0], ROI.shape[1])
+    return ROI[0:mina, 0:mina]
+    plt.figure()
+    plt.imshow(ROI[0:mina, 0:mina])
+    plt.show()
+    
 
 def extract_contour(img, cnts, shown=False, direct=True):
     '''
