@@ -277,15 +277,18 @@ class Extract_from_nc_images(luigi.Task):
                         found = False # distant
 
                         while not found:
-                            ds_dist = nc.Dataset(i)
+                            
+                            rand_index == i 
+                            #RGB_contrast = np.dstack([R, G, B])
+                            while rand_index == i:
+                                rand_index = random.randint(0, len(content)-1)
+                            
+                            ds_dist = nc.Dataset(rand_index)
                             if selective_hour and ( float(ds_dist.__dict__["START_TIME"])>13.20 or ds_dist.__dict__["START_TIME"]<12.90 ):
                                 continue
                             if "BARBADOS" not in ds_dist.__dict__['SUBSET_NAME']:
                                 continue
-                            
-                            #RGB_contrast = np.dstack([R, G, B])
-                            while rand_index != i:
-                                rand_index = random.randint(0, len(content)-1)
+
                             random_img = transform_nc(rand_index)
                             distant_img = NormalizeData(random_img)
 
