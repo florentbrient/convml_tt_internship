@@ -283,13 +283,13 @@ class Extract_from_nc_images(luigi.Task):
                             while rand_index == i:
                                 rand_index = random.randint(0, len(content)-1)
                             
-                            ds_dist = nc.Dataset(rand_index)
+                            ds_dist = nc.Dataset(content[rand_index])
                             if selective_hour and ( float(ds_dist.__dict__["START_TIME"])>13.20 or ds_dist.__dict__["START_TIME"]<12.90 ):
                                 continue
                             if "BARBADOS" not in ds_dist.__dict__['SUBSET_NAME']:
                                 continue
 
-                            random_img = transform_nc(rand_index)
+                            random_img = transform_nc(content[rand_index])
                             distant_img = NormalizeData(random_img)
 
                             #distant_img = cv2.cvtColor(distant_img, cv2.COLOR_BGR2RGB)
