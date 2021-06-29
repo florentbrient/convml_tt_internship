@@ -278,7 +278,7 @@ class Extract_from_nc_images(luigi.Task):
 
                         while not found:
                             
-                            rand_index == i 
+                            rand_index = i 
                             #RGB_contrast = np.dstack([R, G, B])
                             while rand_index == i:
                                 rand_index = random.randint(0, len(content)-1)
