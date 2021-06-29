@@ -301,18 +301,25 @@ class Extract_from_nc_images(luigi.Task):
                         # anchor
                         out_name = TILE_FILENAME_FORMAT.format(triplet_id=tm,tile_type='anchor')
                         out_name = saving_path + out_name
-                        cv2.imwrite(out_name, img[x:x+256,y:y+256])
+                        cv2.imwrite(out_name, RGB_contrast[x:x+256,y:y+256])
+                        print("shape : "+str(RGB_contrast[x:x+256,y:y+256].shape))
+                        print("Save anchor : "+str(out_name))
 
                         # neighbor
                         out_name_neighbor = TILE_FILENAME_FORMAT.format(triplet_id=tm,tile_type='neighbor')
                         out_name_neighbor = saving_path + out_name_neighbor
                         cv2.imwrite(out_name_neighbor, neighobr_img)
+                        print("shape : "+str(neighobr_img.shape))
+                        print("Save neighbor : "+str(out_name_neighbor))
 
                         # distant
                         out_name_distant = TILE_FILENAME_FORMAT.format(triplet_id=tm,tile_type='distant')
                         out_name_distant = saving_path + out_name_distant
                         cv2.imwrite(out_name_distant, distant_img_shaped)
-                        
+                        print("shape : "+str(distant_img_shaped.shape))
+                        print("Save distant : "+str(out_name_distant))
+
+                        print("\n\n")
                         
                         dic_images[out_name] = {}
                         dic_images[out_name]['START_TIME'] = ds.__dict__['START_TIME']
