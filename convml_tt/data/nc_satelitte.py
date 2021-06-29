@@ -12,6 +12,9 @@ import cv2
 import os
 from tqdm import tqdm
 import matplotlib.pyplot as plt
+import time
+import random 
+from math import sqrt, cos, sin
 
 TILE_FILENAME_FORMAT = "{triplet_id:05d}_{tile_type}.png"
 def NormalizeData(arr):
@@ -180,6 +183,7 @@ def transform_nc(file, plot=False):
     return arr_img
 
 
+
 class Extract_from_nc_images(luigi.Task): 
     def run(self,  padding=10, selective_hour=True):
         content = self.input().open('r').read().splitlines()
@@ -192,8 +196,22 @@ class Extract_from_nc_images(luigi.Task):
         not_red = 0
         num_images = 0
         dic_images = {}
+        DATASETS_path = "~/tmp/"
+        train_saving_path = DATASETS_path+'ZOONIVERSE_TRAIN/train/'
+        study_saving_path = DATASETS_path+'ZOONIVERSE_TRAIN/study/'
+        saving_path = train_saving_path
+        PI = 3.1456
+        t = 0
+        index_img = 0
+
+
         for i in tqdm(content):
             #print("file n°"+str(t)+" images generated : "+str(t))
+            if index_img < 0.81*len(content):
+                    saving_path = train_saving_path
+            else:
+                saving_path = study_saving_path
+            
             ds = nc.Dataset(i)
             if selective_hour and ( float(ds.__dict__["START_TIME"])>13.20 or ds.__dict__["START_TIME"]<12.90 ):
                 continue
@@ -232,21 +250,70 @@ class Extract_from_nc_images(luigi.Task):
                         im.save(out_name)
                         v += 1
                         """
+                        pass
                     else:
-                        if False:# t==282:
-                            print("\n\nH : :"+str(HSV[x:x+256,y:y+256]))
-                            print("\n\n")
-                            print(np.unique(HSV[x:x+256,y:y+256][150:256, 0:50]))
-                            print("MASK : "+str(np.unique(mask)))
-                            print("shape : "+str(HSV[x:x+256,y:y+256].shape))
-                            print("UNIQUE IMG : "+str(np.unique(img)))
-                            plt.imshow(RGB_contrast[x:x+256,y:y+256])
-                            plt.show()
-                            plt.imshow(HSV[x:x+256,y:y+256])
-                            plt.show()
+                        start = time.time()
+                        time.clock()    
+                        found = False # Variable meaning that we didn't find suiting neighobr tile
+                        best_neighbor = 0
+                        best_neighbor_img = []
+                        while not found: # Getting a neighbor image
+                            R = 256/2
+                            theta = random.random() * 2 * PI
+
+                            
+                            x_shift, y_shift = int(R * cos(theta)), int(R * sin(theta))
+                            neighobr_img = img[x+x_shift:x+x_shift+256,y+y_shift:y+y_shift+256]
+                            elapsed = time.time() - start
+                            if len(np.unique(neighobr_img.reshape(-1, neighobr_img.shape[2]), axis=0))>best_neighbor and neighobr_img.shape == (256, 256, 3):
+                                best_neighbor = len(np.unique(neighobr_img.reshape(-1, neighobr_img.shape[2]), axis=0))
+                                best_neighbor_img = neighobr_img
+
+                            if (not (neighobr_img.shape != (256, 256, 3) or len(np.unique(neighobr_img.reshape(-1, neighobr_img.shape[2]), axis=0))<30)) or elapsed>30:
+                                found = True
+                        if [0, 0, 0] in best_neighbor_img:
+                            continue
+                        neighobr_img = best_neighbor_img
+                        found = False # distant
+
+                        while not found:
+                            ds_dist = nc.Dataset(i)
+                            if selective_hour and ( float(ds_dist.__dict__["START_TIME"])>13.20 or ds_dist.__dict__["START_TIME"]<12.90 ):
+                                continue
+                            if "BARBADOS" not in ds_dist.__dict__['SUBSET_NAME']:
+                                continue
+                            
+                            #RGB_contrast = np.dstack([R, G, B])
+                            while rand_index != i:
+                                rand_index = random.randint(0, len(content)-1)
+                            random_img = transform_nc(rand_index)
+                            distant_img = NormalizeData(random_img)
+
+                            #distant_img = cv2.cvtColor(distant_img, cv2.COLOR_BGR2RGB)
+                            x_distant = random.randint(0, distant_img.shape[0]-257)
+                            y_distant = random.randint(0, distant_img.shape[1]-257)
+                            distant_img_shaped = distant_img[x_distant:x_distant+256,y_distant:y_distant+256]
+                            if not (distant_img_shaped.shape != (256, 256, 3) or [0,0,0] in distant_img_shaped):
+                                found = True
+                            
                         tm = t
+                        
+                        # anchor
                         out_name = TILE_FILENAME_FORMAT.format(triplet_id=tm,tile_type='anchor')
-                        out_name = 'tmp/train/'+out_name
+                        out_name = saving_path + out_name
+                        cv2.imwrite(out_name, img[x:x+256,y:y+256])
+
+                        # neighbor
+                        out_name_neighbor = TILE_FILENAME_FORMAT.format(triplet_id=tm,tile_type='neighbor')
+                        out_name_neighbor = saving_path + out_name_neighbor
+                        cv2.imwrite(out_name_neighbor, neighobr_img)
+
+                        # distant
+                        out_name_distant = TILE_FILENAME_FORMAT.format(triplet_id=tm,tile_type='distant')
+                        out_name_distant = saving_path + out_name_distant
+                        cv2.imwrite(out_name_distant, distant_img_shaped)
+                        
+                        
                         dic_images[out_name] = {}
                         dic_images[out_name]['START_TIME'] = ds.__dict__['START_TIME']
                         dic_images[out_name]['END_TIME'] = ds.__dict__['END_TIME']
@@ -258,9 +325,7 @@ class Extract_from_nc_images(luigi.Task):
                         dic_images[out_name]['LON_WEST_SUBSET'] = ds.__dict__['LON_WEST_SUBSET']
                         dic_images[out_name]['LON_EAST_SUBSET'] = ds.__dict__['LON_EAST_SUBSET']
                         dic_images[out_name]["CROP"] = [x, x+256, y, y+256]
-                        #cv2.imwrite(out_name,RGB_contrast[x:x+256,y:y+256])
-                        im = Image.fromarray(RGB_contrast[x:x+256,y:y+256])
-                        im.save(out_name)
+
                         t += 1
 
         with self.output().open("w") as f:

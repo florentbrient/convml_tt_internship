@@ -54,7 +54,7 @@ def backbone_and_num_features(
     trainable_backbone_layers: int = 3,
     anti_aliased=False,
     **kwargs,
-) -> Tuple[nn.Module, int]:
+    ) -> Tuple[nn.Module, int]:
     """
     Args:
         model_name: backbone supported by `torchvision` and `bolts`

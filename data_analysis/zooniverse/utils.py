@@ -33,7 +33,7 @@ from PIL import Image
 import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.model_selection import train_test_split
-from sklearn.neighbors.nearest_centroid import NearestCentroid
+from sklearn.neighbors import NearestCentroid
 from tqdm.notebook import tqdm
 TILE_FILENAME_FORMAT = "{triplet_id:05d}_{tile_type}.png"
 TEST_SIZE = 0.3
