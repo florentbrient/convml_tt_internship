@@ -263,7 +263,7 @@ class Extract_from_nc_images(luigi.Task):
 
                             
                             x_shift, y_shift = int(R * cos(theta)), int(R * sin(theta))
-                            neighobr_img = img[x+x_shift:x+x_shift+256,y+y_shift:y+y_shift+256]
+                            neighobr_img = RGB_contrast[x+x_shift:x+x_shift+256,y+y_shift:y+y_shift+256]
                             elapsed = time.time() - start
                             if len(np.unique(neighobr_img.reshape(-1, neighobr_img.shape[2]), axis=0))>best_neighbor and neighobr_img.shape == (256, 256, 3):
                                 best_neighbor = len(np.unique(neighobr_img.reshape(-1, neighobr_img.shape[2]), axis=0))
@@ -290,8 +290,9 @@ class Extract_from_nc_images(luigi.Task):
                                 continue
 
                             random_img = transform_nc(content[rand_index])
+                            print("RANDOM IMG SHAPE : "+str(random_img.shape))
                             distant_img = NormalizeData(random_img)
-
+                            print("DISTANT IMG SHAPE : "+str(random_img.shape))
                             #distant_img = cv2.cvtColor(distant_img, cv2.COLOR_BGR2RGB)
                             x_distant = random.randint(0, distant_img.shape[0]-257)
                             y_distant = random.randint(0, distant_img.shape[1]-257)
