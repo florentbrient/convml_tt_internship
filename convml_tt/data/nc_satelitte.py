@@ -197,8 +197,8 @@ class Extract_from_nc_images(luigi.Task):
         num_images = 0
         dic_images = {}
         DATASETS_path = "~/tmp/"
-        train_saving_path = DATASETS_path+'ZOONIVERSE_TRAIN/train/'
-        study_saving_path = DATASETS_path+'ZOONIVERSE_TRAIN/study/'
+        train_saving_path = DATASETS_path+'train/'
+        study_saving_path = DATASETS_path+'study/'
         saving_path = train_saving_path
         PI = 3.1456
         t = 0
@@ -290,9 +290,9 @@ class Extract_from_nc_images(luigi.Task):
                                 continue
 
                             random_img = transform_nc(content[rand_index])
-                            print("RANDOM IMG SHAPE : "+str(random_img.shape))
+                            #print("RANDOM IMG SHAPE : "+str(random_img.shape))
                             distant_img = NormalizeData(random_img)
-                            print("DISTANT IMG SHAPE : "+str(random_img.shape))
+                            #print("DISTANT IMG SHAPE : "+str(random_img.shape))
                             #distant_img = cv2.cvtColor(distant_img, cv2.COLOR_BGR2RGB)
                             x_distant = random.randint(0, distant_img.shape[0]-257)
                             y_distant = random.randint(0, distant_img.shape[1]-257)
@@ -305,30 +305,30 @@ class Extract_from_nc_images(luigi.Task):
                         # anchor
                         out_name = TILE_FILENAME_FORMAT.format(triplet_id=tm,tile_type='anchor')
                         out_name = saving_path + out_name
-                        print("shape : "+str(RGB_contrast[x:x+256,y:y+256].shape))
-                        print("Save anchor : "+str(out_name))
+                        #print("shape : "+str(RGB_contrast[x:x+256,y:y+256].shape))
+                        #print("Save anchor : "+str(out_name))
                         cv2.imwrite(out_name, RGB_contrast[x:x+256,y:y+256])
                         
 
                         # neighbor
                         out_name_neighbor = TILE_FILENAME_FORMAT.format(triplet_id=tm,tile_type='neighbor')
                         out_name_neighbor = saving_path + out_name_neighbor
-                        print("shape : "+str(neighobr_img.shape))
-                        print("Save neighbor : "+str(out_name_neighbor))
-                        print("unique : "+str(np.unique(neighobr_img)))
+                        #print("shape : "+str(neighobr_img.shape))
+                        #print("Save neighbor : "+str(out_name_neighbor))
+                        #print("unique : "+str(np.unique(neighobr_img)))
                         cv2.imwrite(out_name_neighbor, neighobr_img)
                         
 
                         # distant
                         out_name_distant = TILE_FILENAME_FORMAT.format(triplet_id=tm,tile_type='distant')
                         out_name_distant = saving_path + out_name_distant
-                        print("shape : "+str(distant_img_shaped.shape))
-                        print("Save distant : "+str(out_name_distant))
-                        print("unique : "+str(np.unique(distant_img_shaped)))
+                        #print("shape : "+str(distant_img_shaped.shape))
+                        #print("Save distant : "+str(out_name_distant))
+                        #print("unique : "+str(np.unique(distant_img_shaped)))
                         cv2.imwrite(out_name_distant, distant_img_shaped)
                         
 
-                        print("\n\n")
+                        #print("\n\n")
                         
                         dic_images[out_name] = {}
                         dic_images[out_name]['START_TIME'] = ds.__dict__['START_TIME']
