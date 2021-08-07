@@ -16,8 +16,7 @@ import matplotlib.image as mpimg
 from matplotlib.patches import Polygon
 from matplotlib.collections import PatchCollection
 
-import xarray as xr
-import pandas as pd
+
 import pytorch_lightning as pl
 from matplotlib.patches import Polygon
 from matplotlib.collections import PatchCollection

@@ -9,4 +9,4 @@
 #SBATCH --gres=gpu:1
 #SBATCH --gres-flags=enforce-binding
 
-python -m convml_tt.trainer data/ZOONIVERSE --max-epochs 50 --base-arch resnet18 --log-to-wandb --anti-aliased-backbone --batch-size 4 --lr 1e-04 --gpus 1
+python -m convml_tt.trainer data/MODIS_EURE4CA --max-epochs 100 --base-arch resnet18 --log-to-wandb --anti-aliased-backbone --batch-size 8 --lr 1e-04 

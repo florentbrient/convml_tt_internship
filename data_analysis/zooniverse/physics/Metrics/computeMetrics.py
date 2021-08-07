@@ -12,7 +12,7 @@ from .fourier import FourierMetrics
 from .cop import COP
 from .scai import SCAI
 from .rdf import RDF
-from .network import Network
+#from .network import Network
 from .iorgPoisson import IOrgPoisson
 from .fracDim import FracDim
 from .iorg import IOrg
@@ -153,7 +153,7 @@ def computeMetrics(metrics,mpar):
         orie = Orient(mpar=mpar)
         orie.compute()
 
-def evaluateMetrics(metrics,fields,mpar=None):
+def evaluateMetrics(metrics,fields,mpar=None, printed=False):
     '''
     Compute metrics on a set of input fields on a single scene, by sequentially
     calling the metric method of metric objects. This may be more flexible 
@@ -192,79 +192,98 @@ def evaluateMetrics(metrics,fields,mpar=None):
     df = pd.DataFrame(index=[0], columns=metrics)
 
     if 'cf' in metrics:
-        print('Computing cf')
+        if printed:
+            print('Computing cf')
         cf = CF(mpar=mpar)
         df['cf'] = cf.metric(fields['cm'])
     if 'cwp' in metrics:
-        print('Computing cwp metrics')
+        if printed:
+            print('Computing cwp metrics')
         cwp = CWP(mpar=mpar)
         df['cwp'], df['cwpVar'], df['cwpSke'], df['cwpKur'], df['cwpVarCl'] \
         = cwp.metric(fields['cwp'])
     if 'lMax' in metrics:
-        print('Computing object metrics')
+        if printed:
+            print('Computing object metrics')
         objects = Objects(mpar=mpar)
         df['lMax'], df['lMean'], df['nClouds'], df['eccA'], df['periSum'] \
         = objects.metric(fields['cm'],fields['im'])
     if 'cth' in metrics:
-        print('Computing cth metrics')
+        if printed:
+            print('Computing cth metrics')
         cth = CTH(mpar=mpar)
         df['cth'], df['cthVar'], df['cthSke'], df['cthKur'] = \
         cth.metric(fields['cth'],fields['cm'])
     if 'sizeExp' in metrics:
-        print('Computing sizeExp')
+        if printed:
+            print('Computing sizeExp')
         csd = CSD(mpar=mpar)
-        df['sizeExp'] = csd.metric(fields['cm'])
+        try:
+            df['sizeExp'] = csd.metric(fields['cm'])
+        except TypeError:
+            df['sizeExp'] = 0
     if 'beta' in metrics:
-        print('Computing Fourier metrics')
+        if printed:
+            print('Computing Fourier metrics')
         fourier = FourierMetrics(mpar=mpar)
         df['beta'], df['betaa'], df['psdAzVar'], df['specL'], df['specLMom'] \
         = fourier.metric(fields['cm'])
     if 'cop' in metrics:
-        print('Computing COP')
+        if printed:
+            print('Computing COP')
         cop = COP(mpar=mpar)
         df['cop'] = cop.metric(fields['cm'])
     if 'scai' in metrics:
-        print('Computing SCAI')
+        if printed:
+            print('Computing SCAI')
         scai = SCAI(mpar=mpar)
         df['d0'], df['scai'] = scai.metric(fields['cm'])
     if 'rdfMax' in metrics:
-        print('Computing RDF metrics')
+        if printed:
+            print('Computing RDF metrics')
         rdf = RDF(mpar=mpar)
         df['rdfMax'], df['rdfInt'], df['rdfDiff'] = rdf.metric(fields['cm'])
     
     if 'netVarDeg' in metrics:
-        print('Computing network metrics')
+        if printed:
+            print('Computing network metrics')
         network = Network(mpar=mpar)
         df['netVarDeg'], df['netAWPar'], df['netCoPar'], df['netLPar'], \
         df['netLCorr'], df['netDefSl'], df['netDegMax'] = \
         network.metric(fields['cm'])
     
     if 'iOrgPoiss' in metrics:
-        print('Computing Poisson iOrg')
+        if printed:
+            print('Computing Poisson iOrg')
         iOrgPoisson = IOrgPoisson(mpar=mpar)
         df['iOrgPoiss'] = iOrgPoisson.metric(fields['cm'])
     if 'fracDim' in metrics:
-        print('Computing fractal dimension') 
+        if printed:
+            print('Computing fractal dimension') 
         fracDim = FracDim(mpar=mpar)
         df['fracDim'] = fracDim.metric(fields['cm'])
     if 'iOrg' in metrics:
-        print('Computing iOrg')
+        if printed:
+            print('Computing iOrg')
         iOrg = IOrg(mpar=mpar)
         df['iOrg'] = iOrg.metric(fields['cm'])
     if 'os' in metrics:
-        print('Computing open sky metric')
+        if printed:
+            print('Computing open sky metric')
         os = OpenSky(mpar=mpar)
         df['os'] = os.metric(fields['cm'])
     if 'twpVar' in metrics:
         twpVar = TWPVar(mpar=mpar)
         df['twpVar'] = twpVar.metric(fields['cwp'])
     if 'woi3' in metrics:
-        print('Computing wavelet organisation indicies')
+        if printed:
+            print('Computing wavelet organisation indicies')
         woi = WOI(mpar=mpar)
         df['woi1'], df['woi2'], df['woi3'], df['woi'] = \
         woi.metric(fields['cwp'],fields['cm'])
     if 'orie' in metrics:
-        print('Computing orientation from raw image moments')
+        if printed:
+            print('Computing orientation from raw image moments')
         orie = Orient(mpar=mpar)
         df['orie'] = orie.metric(fields['cm'])
 
