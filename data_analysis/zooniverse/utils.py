@@ -6,6 +6,7 @@ import sklearn.decomposition
 from sklearn.preprocessing import StandardScaler
 from sklearn.cluster import KMeans
 #from ...data.dataset import ImageSingletDataset, TileType
+from convml_tt.data.dataset import TileType, ImageSingletDataset
 import pickle
 from sklearn.metrics import silhouette_score
 import cv2
@@ -38,7 +39,7 @@ TILE_FILENAME_FORMAT = "{triplet_id:05d}_{tile_type}.png"
 TEST_SIZE = 0.3
 RANDOM_STATE = 1024
 COLORS = ['b', 'g', 'r', 'm'] # Color of each class
-DATASET_DIR = "../../../NC/zooniverse/"
+#DATASET_DIR = "../../NC/zooniverse/"
 print(cv2.__version__)
 
 pca = PCA(n_components=3, svd_solver='arpack')
@@ -151,7 +152,10 @@ def predict_domain(image):
     
 
 def visualize_boxes_cluster(df, sample):
-    tmp_dataset_path =  '../../../NC/tmp'
+    #tmp_dataset_path =  '../../../NC/tmp'
+    #print(tmp_dataset_path)
+    tmp_dataset_path = '../../NC/division'
+    #print(tmp_dataset_path)
     for filename in os.listdir(tmp_dataset_path+"/train/"):
         file_path = os.path.join(tmp_dataset_path+"/train/", filename)
         try:
@@ -201,7 +205,7 @@ def visualize_boxes_cluster(df, sample):
                         tm = t
                         coordinates.append([xvs[da]+x,yvs[da]+y, wvs[da], hvs[da]])
                         out_name = TILE_FILENAME_FORMAT.format(triplet_id=tm,tile_type='anchor')
-                        out_name = '../../../NC/tmp/train/'+out_name
+                        out_name = '../../NC/tmp/train/'+out_name
                         cv2.imwrite(out_name,rgbImg[x:x+256,y:y+256])
                         t += 1
                 da += 1
