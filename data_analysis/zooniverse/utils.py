@@ -7,6 +7,8 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.cluster import KMeans
 #from ...data.dataset import ImageSingletDataset, TileType
 from convml_tt.data.dataset import TileType, ImageSingletDataset
+from convml_tt.utils import get_embeddings
+
 import pickle
 from sklearn.metrics import silhouette_score
 import cv2
@@ -151,25 +153,32 @@ def predict_domain(image):
     return da_embeddings
     
 
-def visualize_boxes_cluster(df, sample):
+def visualize_boxes_cluster(df, sample, path_tmp, path):
     #tmp_dataset_path =  '../../../NC/tmp'
     #print(tmp_dataset_path)
-    tmp_dataset_path = '../../NC/division'
-    #print(tmp_dataset_path)
+    #tmp_dataset_path = '../../NC/division'
+    tmp_dataset_path  = path_tmp
+    train_images_path = path
+    print(tmp_dataset_path,train_images_path)
     for filename in os.listdir(tmp_dataset_path+"/train/"):
         file_path = os.path.join(tmp_dataset_path+"/train/", filename)
-        try:
-            if os.path.isfile(file_path) or os.path.islink(file_path):
-                os.unlink(file_path)
-            elif os.path.isdir(file_path):
-                shutil.rmtree(file_path)
-        except Exception as e:
-            print('Failed to delete %s. Reason: %s' % (file_path, e))
+        print(file_path)
+        print(os.path.isfile(file_path),os.path.islink(file_path))
+        # Remove because it deletes all my files (ask Rayan)
+        #try:
+        #    if os.path.isfile(file_path) or os.path.islink(file_path):
+        #        os.unlink(file_path)
+        #    elif os.path.isdir(file_path):
+        #        shutil.rmtree(file_path)
+        #except Exception as e:
+        #    print('Failed to delete %s. Reason: %s' % (file_path, e))
     coordinates = []
     t = 0
     
     fig, ax = plt.subplots(figsize=(15, 10))
-    img_path = os.path.join(DATASET_DIR, 'train_images', sample[0])
+#    img_path = os.path.join(DATASET_DIR, 'train_images', sample[0])
+    img_path = os.path.join(train_images_path, 'train_images', sample[0])
+    print('1 ',train_images_path,img_path)
     img = cv2.imread(img_path, 1)
     img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
@@ -245,22 +254,25 @@ def visualize_boxes_cluster(df, sample):
     plt.show()
 
 
-def visualize_domain(df, sample):
-    tmp_dataset_path =  '../../../NC/tmp'
+def visualize_domain(df, sample, path_tmp, path):
+    #tmp_dataset_path =  '../../../NC/tmp'
+    tmp_dataset_path  = path_tmp
+    train_images_path = path
+
     for filename in os.listdir(tmp_dataset_path+"/train/"):
         file_path = os.path.join(tmp_dataset_path+"/train/", filename)
-        try:
-            if os.path.isfile(file_path) or os.path.islink(file_path):
-                os.unlink(file_path)
-            elif os.path.isdir(file_path):
-                shutil.rmtree(file_path)
-        except Exception as e:
-            print('Failed to delete %s. Reason: %s' % (file_path, e))
+        #try:
+        #    if os.path.isfile(file_path) or os.path.islink(file_path):
+        #        os.unlink(file_path)
+        #    elif os.path.isdir(file_path):
+        #        shutil.rmtree(file_path)
+        #except Exception as e:
+        #    print('Failed to delete %s. Reason: %s' % (file_path, e))
     coordinates = []
     t = 0
     
     fig, ax = plt.subplots(figsize=(15, 10))
-    img_path = os.path.join(DATASET_DIR, 'train_images', sample[0])
+    img_path = os.path.join(train_images_path, 'train_images', sample[0])
     img = cv2.imread(img_path, 1)
     img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
