@@ -72,6 +72,7 @@ def annotated_scatter_plot(
         fig, ax = plt.subplots(figsize=(14, 10))
     else:
         fig = ax.figure
+    print('In annotated')
 
     required_vars = ["data_dir", "tile_type", "stage"]
     if tile_dataset is None:
@@ -164,6 +165,7 @@ def annotated_scatter_plot(
         color = "grey"
 
     for n, tile_id in enumerate(tile_ids):
+        print(n,tile_id)
         x_, y_ = pts_offset[n]
 
         pts_connector = np.c_[pts_offset[n], pts[n]]
@@ -228,7 +230,7 @@ def annotated_scatter_plot(
             hue_order=colormap.keys(),
         )
     else:
-        ax.scatter(x, y, marker=".", alpha=0.2, color="grey")
+        ax.scatter(x, y, marker=".", alpha=0.2, color="red") #"grey")
 
     ax.set_xlabel(x._title_for_slice() + "\n" + xr.plot.utils.label_from_attrs(x))
     ax.set_ylabel(y._title_for_slice() + "\n" + xr.plot.utils.label_from_attrs(y))
