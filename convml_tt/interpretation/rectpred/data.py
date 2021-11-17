@@ -67,6 +67,7 @@ def make_sliding_tile_model_predictions(
     """
     # TODO: make `N_tile` a parameter of the model the dataset is used with
     N_tile = (256, 256)
+    print(N_tile)
 
     # need to ensure the image-tiles that are sampled are transformed to match
     # the base-architecture (in case we're using a pretrained network)
